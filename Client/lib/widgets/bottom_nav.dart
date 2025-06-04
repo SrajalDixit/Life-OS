@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:life_os/views/ai_view.dart';
 import 'package:life_os/views/notes_view.dart';
+import 'package:life_os/views/profile_view.dart';
 import 'package:life_os/views/tasks_view.dart';
 
 
@@ -16,8 +18,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   final List<Widget> _screens = const [
   
-    Tasks_view(),
+    TasksView(),
     Notes_view(),
+    AIview(),
+    ProfileView()
   ];
 
   @override
@@ -31,7 +35,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
           backgroundColor: Colors.black,
           color: Colors.white,
           activeColor: Colors.white,
-          tabBackgroundColor: Colors.deepPurple.shade400,
+          tabBackgroundColor: const Color(0xFF0FA4A5),
+
           gap: 8,
           padding: const EdgeInsets.all(16),
           selectedIndex: _selectedIndex,
@@ -41,9 +46,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
             });
           },
           tabs: const [
-            GButton(icon: Icons.home, text: 'Home'),
             GButton(icon: Icons.task, text: 'Tasks'),
-            GButton(icon: Icons.person, text: 'Profile'),
+            GButton(icon: Icons.notes, text: 'Notes'),
+            GButton(icon: Icons.adb, text: 'AI assistant'),
+            GButton(icon: Icons.face_6_sharp, text: 'Profile'),
           ],
         ),
       ),
