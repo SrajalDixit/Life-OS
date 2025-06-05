@@ -4,6 +4,21 @@ import 'dart:convert';
 class ApiService {
   static const String baseUrl = 'http://192.168.97.44:8000';
 
+  static Future<void> updateTaskStatus(String id, bool completed) async {
+    final url = Uri.parse('$baseUrl/update-task-status/$id');
+
+    final response = await http.patch(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"is_completed": completed}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to update task status");
+    }
+  }
+
+
 
   static Future<List<dynamic>> fetchTasks() async {
     final url = await Uri.parse('$baseUrl/tasks');

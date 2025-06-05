@@ -10,7 +10,8 @@ def get_tasks():
     try:
         tasks = list(mongo.db.tasks.find())
         for task in tasks:
-            task["_id"] = str(task["_id"])
+             task["id"] = str(task["_id"]) 
+             del task["_id"]
         return tasks
     except Exception as e:
         return {"error": str(e)}
@@ -24,8 +25,19 @@ def create_task(task: Task):
 
 @router.put("/tasks/{task_id}")
 def update_task(task_id: str, task: Task):
-    db.tasks.update_one({"_id": ObjectId(task_id)}, {"$set": task.dict()})
-    return {"message": "Task updated"}
+    try:
+        result = mongo.db.tasks.update_one(
+            {"_id": ObjectId(task_id)},
+            {"$set": task.dict()}
+        )
+        if result.modified_count == 1:
+            return {"message": "Task updated"}
+        else:
+            return {"message": "No changes made"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
 
 @router.delete("/tasks/{task_id}")
 def delete_task(task_id: str):

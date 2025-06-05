@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:life_os/services.dart/task_api_services.dart';
+import 'package:life_os/widgets/continue_button.dart';
 import 'package:life_os/widgets/task_tile.dart';
 
 
@@ -12,7 +13,9 @@ class TasksView extends StatefulWidget {
 
 class _TasksViewState extends State<TasksView> {
   List<Map<String, dynamic>> tasks = [];
+  Set<String> updatedTaskIds = {};
   bool isLoading = true;
+  bool isSaving = false;
 
   @override
   void initState() {
@@ -27,11 +30,10 @@ class _TasksViewState extends State<TasksView> {
         tasks = data
             .map((task) => {
                   'title': task['title'],
-                  'completed': task['is_completed'], // fix here
+                  'completed': task['is_completed'],
                   '_id': task['_id'],
                 })
             .toList();
-
         isLoading = false;
       });
     } catch (e) {
@@ -46,53 +48,95 @@ class _TasksViewState extends State<TasksView> {
     if (value == null) return;
     setState(() {
       tasks[index]['completed'] = value;
+      updatedTaskIds.add(tasks[index]['_id']);
     });
-    // TODO: Add API update call here later
+  }
+
+  Future<void> saveUpdatedTasks() async {
+    setState(() => isSaving = true);
+    try {
+      for (var task in tasks) {
+        if (updatedTaskIds.contains(task['_id'])) {
+          await ApiService.updateTaskStatus(
+            task['_id'],
+            task['completed'],
+          );
+        }
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Tasks saved successfully")),
+      );
+      updatedTaskIds.clear();
+    } catch (e) {
+      print('Error saving tasks: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to save tasks")),
+      );
+    } finally {
+      setState(() => isSaving = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 40),
-            const Text(
-              "Today's Tasks",
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 40, 16, 80),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Today's Tasks",
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                if (isLoading)
+                  const Center(child: CircularProgressIndicator())
+                else if (tasks.isEmpty)
+                  const Center(
+                    child: Text(
+                      'No tasks found',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  )
+                else
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: tasks.length,
+                      itemBuilder: (context, index) {
+                        return TaskTile(
+                          title: tasks[index]['title'],
+                          completed: tasks[index]['completed'],
+                          onChanged: (value) =>
+                              toggleTaskCompletion(index, value),
+                        );
+                      },
+                    ),
+                  ),
+              ],
+            ),
+          ),
+
+          // Positioned Save Button
+          Positioned(
+            bottom: 20,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: SaveButton(
+                isSaving: isSaving,
+                onPressed: saveUpdatedTasks,
               ),
             ),
-            const SizedBox(height: 20),
-            if (isLoading)
-              const Center(child: CircularProgressIndicator())
-            else if (tasks.isEmpty)
-              const Center(
-                child: Text(
-                  'No tasks found',
-                  style: TextStyle(color: Colors.white),
-                ),
-              )
-            else
-              Expanded(
-                child: ListView.builder(
-                  itemCount: tasks.length,
-                  itemBuilder: (context, index) {
-                    return TaskTile(
-                      title: tasks[index]['title'],
-                      completed: tasks[index]['completed'],
-                      onChanged: (value) => toggleTaskCompletion(index, value),
-                    );
-                  },
-                ),
-              ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
