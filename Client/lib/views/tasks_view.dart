@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:life_os/constants.dart';
 import 'package:life_os/services.dart/task_api_services.dart';
+import 'package:life_os/views/new_task.dart';
 import 'package:life_os/widgets/continue_button.dart';
 import 'package:life_os/widgets/task_tile.dart';
 
@@ -82,67 +84,80 @@ class _TasksViewState extends State<TasksView> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 40, 16, 80),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Today's Tasks",
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+ @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: Colors.black,
+    body: Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 40, 16, 80),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Today's Tasks",
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 20),
+              if (isLoading)
+                const Center(child: CircularProgressIndicator())
+              else if (tasks.isEmpty)
+                const Center(
+                  child: Text(
+                    'No tasks found',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                )
+              else
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: tasks.length,
+                    itemBuilder: (context, index) {
+                      return TaskTile(
+                        title: tasks[index]['title'],
+                        completed: tasks[index]['is_completed'],
+                        onChanged: (value) =>
+                            toggleTaskCompletion(index, value),
+                      );
+                    },
                   ),
                 ),
-                const SizedBox(height: 20),
-                if (isLoading)
-                  const Center(child: CircularProgressIndicator())
-                else if (tasks.isEmpty)
-                  const Center(
-                    child: Text(
-                      'No tasks found',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  )
-                else
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: tasks.length,
-                      itemBuilder: (context, index) {
-                        return TaskTile(
-                          title: tasks[index]['title'],
-                          completed: tasks[index]['is_completed'],
-                          onChanged: (value) =>
-                              toggleTaskCompletion(index, value),
-                        );
-                      },
-                    ),
-                  ),
-              ],
-            ),
+            ],
           ),
+        ),
 
-          // Positioned Save Button
-          Positioned(
-            bottom: 20,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: SaveButton(
-                isSaving: isSaving,
-                onPressed: saveUpdatedTasks,
-              ),
+        // Positioned Save Button
+        Positioned(
+          bottom: 20,
+          left: 0,
+          right: 0,
+          child: Center(
+            child: SaveButton(
+              isSaving: isSaving,
+              onPressed: saveUpdatedTasks,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
+    ),
+
+   
+    floatingActionButton: FloatingActionButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => NewTask()),
     );
-  }
+  },
+  backgroundColor: MainColor,
+  child: const Icon(Icons.add),
+),
+
+  );
+}
 }
