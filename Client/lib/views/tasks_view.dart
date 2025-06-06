@@ -3,7 +3,6 @@ import 'package:life_os/services.dart/task_api_services.dart';
 import 'package:life_os/widgets/continue_button.dart';
 import 'package:life_os/widgets/task_tile.dart';
 
-
 class TasksView extends StatefulWidget {
   const TasksView({super.key});
 
@@ -30,8 +29,8 @@ class _TasksViewState extends State<TasksView> {
         tasks = data
             .map((task) => {
                   'title': task['title'],
-                  'completed': task['is_completed'],
-                  '_id': task['_id'],
+                  'is_completed': task['is_completed'],
+                  'id': task['id'],
                 })
             .toList();
         isLoading = false;
@@ -46,34 +45,52 @@ class _TasksViewState extends State<TasksView> {
 
   void toggleTaskCompletion(int index, bool? value) {
     if (value == null) return;
-    setState(() {
-      tasks[index]['completed'] = value;
-      updatedTaskIds.add(tasks[index]['_id']);
-    });
+
+    final taskId = tasks[index]['id'];
+
+    if (taskId != null) {
+      setState(() {
+        tasks[index]['is_completed'] = value;
+        updatedTaskIds.add(taskId);
+        print('✅ Updated Task IDs: $updatedTaskIds');
+      });
+    } else {
+      print("⚠️ Task ID is null for index $index");
+    }
   }
 
   Future<void> saveUpdatedTasks() async {
     setState(() => isSaving = true);
     try {
       for (var task in tasks) {
-        if (updatedTaskIds.contains(task['_id'])) {
-          await ApiService.updateTaskStatus(
-            task['_id'],
-            task['completed'],
-          );
+        final taskId = task['id'];
+        final isCompleted = task['is_completed'];
+
+        print("🔍 Checking task: ID = $taskId, Completed = $isCompleted");
+
+        if (updatedTaskIds.contains(taskId)) {
+          print("Sending update: ${task['id']} => ${task['is_completed']}");
+
+          await ApiService.updateTaskStatus(taskId, isCompleted);
+
+          print("✅ Update sent successfully for $taskId");
         }
       }
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Tasks saved successfully")),
       );
+
       updatedTaskIds.clear();
+      print("🧹 Cleared updatedTaskIds set");
     } catch (e) {
-      print('Error saving tasks: $e');
+      print('❌ Error saving tasks: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Failed to save tasks")),
       );
     } finally {
       setState(() => isSaving = false);
+      print("🔚 Finished saving tasks");
     }
   }
 
@@ -113,7 +130,7 @@ class _TasksViewState extends State<TasksView> {
                       itemBuilder: (context, index) {
                         return TaskTile(
                           title: tasks[index]['title'],
-                          completed: tasks[index]['completed'],
+                          completed: tasks[index]['is_completed'],
                           onChanged: (value) =>
                               toggleTaskCompletion(index, value),
                         );

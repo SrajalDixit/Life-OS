@@ -2,8 +2,14 @@ from fastapi import APIRouter
 from app.models.task_model import Task
 from app.database import mongo
 from bson import ObjectId
+from fastapi import Body
+from pydantic import BaseModel
+
 
 router = APIRouter()
+
+class TaskUpdate(BaseModel):
+    is_completed: bool
 
 @router.get("/tasks")
 def get_tasks():
@@ -22,6 +28,24 @@ def get_tasks():
 def create_task(task: Task):
     result = db.tasks.insert_one(task.dict())
     return {"id": str(result.inserted_id)}
+
+    
+
+@router.patch("/tasks/{task_id}")
+def update_task_status(task_id: str, update: TaskUpdate):
+    try:
+        print(f"Received update: {task_id} => is_completed = {update.is_completed}")
+
+        result = mongo.db.tasks.update_one(
+            {"_id": ObjectId(task_id)},
+            {"$set": {"is_completed": bool(update.is_completed)}}
+        )
+        if result.modified_count == 1:
+            return {"message": "Task updated"}
+        return {"message": "No changes made"}
+    except Exception as e:
+        return {"error": str(e)}
+
 
 @router.put("/tasks/{task_id}")
 def update_task(task_id: str, task: Task):
