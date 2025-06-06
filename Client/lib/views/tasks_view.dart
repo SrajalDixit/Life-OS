@@ -52,11 +52,8 @@ class _TasksViewState extends State<TasksView> {
       setState(() {
         tasks[index]['is_completed'] = value;
         updatedTaskIds.add(taskId);
-        print('✅ Updated Task IDs: $updatedTaskIds');
       });
-    } else {
-      print("⚠️ Task ID is null for index $index");
-    }
+    } else {}
   }
 
   Future<void> saveUpdatedTasks() async {
@@ -66,14 +63,8 @@ class _TasksViewState extends State<TasksView> {
         final taskId = task['id'];
         final isCompleted = task['is_completed'];
 
-        print("🔍 Checking task: ID = $taskId, Completed = $isCompleted");
-
         if (updatedTaskIds.contains(taskId)) {
-          print("Sending update: ${task['id']} => ${task['is_completed']}");
-
           await ApiService.updateTaskStatus(taskId, isCompleted);
-
-          print("✅ Update sent successfully for $taskId");
         }
       }
 
@@ -82,15 +73,12 @@ class _TasksViewState extends State<TasksView> {
       );
 
       updatedTaskIds.clear();
-      print("🧹 Cleared updatedTaskIds set");
     } catch (e) {
-      print('❌ Error saving tasks: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Failed to save tasks")),
       );
     } finally {
       setState(() => isSaving = false);
-      print("🔚 Finished saving tasks");
     }
   }
 
