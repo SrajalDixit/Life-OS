@@ -13,5 +13,5 @@ def connect_to_mongo():
     if not mongo_url:
         raise ValueError("MONGODB_URL environment variable is not set.")
     client = MongoClient(mongo_url)
-    db = client.get_database("lifeOS")  # Make sure this matches your actual DB name
+    db = client.get_database("lifeOS") 
     print("Connected to MongoDB")

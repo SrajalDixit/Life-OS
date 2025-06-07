@@ -10,6 +10,8 @@ class AIview extends StatefulWidget {
 class _AIviewState extends State<AIview> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      backgroundColor: Colors.black,
+    );
   }
 }
