@@ -4,6 +4,43 @@ import 'dart:convert';
 class ApiService {
   static const String baseUrl = 'http://192.168.97.44:8000';
 
+  static Future<bool> deleteTask(String id) async {
+    final url = Uri.parse(
+        '$baseUrl/tasks/$id'); // Ensure this matches your FastAPI route
+
+    try {
+      final response = await http.delete(url);
+      print('Delete status: ${response.statusCode}');
+      print('Delete response: ${response.body}');
+      return response.statusCode == 200;
+    } catch (e) {
+      print('Error deleting task: $e');
+      return false;
+    }
+  }
+
+  static Future<bool> addTask(String title) async {
+    final url = Uri.parse('$baseUrl/tasks');
+
+    final body = {
+      'title': title,
+      'is_completed': false,
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
+
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      print('Error occurred while adding task: $e');
+      return false;
+    }
+  }
+
   static Future<void> updateTaskStatus(String? id, bool completed) async {
     if (id == null || id.isEmpty) {
       return;
@@ -37,6 +74,4 @@ class ApiService {
       throw Exception('Failed to load tasks');
     }
   }
-
-  // You can also add methods for POST, PUT, DELETE here later
 }

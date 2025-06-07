@@ -4,12 +4,14 @@ class TaskTile extends StatelessWidget {
   final String title;
   final bool completed;
   final ValueChanged<bool?> onChanged;
+  final VoidCallback onDelete;
 
   const TaskTile({
     super.key,
     required this.title,
     required this.completed,
     required this.onChanged,
+    required this.onDelete,
   });
 
   @override
@@ -26,10 +28,11 @@ class TaskTile extends StatelessWidget {
         ),
         title: Text(
           title,
-          style: TextStyle(
-            color: Colors.white,
-            
-          ),
+          style: const TextStyle(color: Colors.white),
+        ),
+        trailing: IconButton(
+          icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
+          onPressed: onDelete,
         ),
       ),
     );

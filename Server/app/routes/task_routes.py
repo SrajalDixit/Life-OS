@@ -26,7 +26,7 @@ def get_tasks():
 
 @router.post("/tasks")
 def create_task(task: Task):
-    result = db.tasks.insert_one(task.dict())
+    result = mongo.db.tasks.insert_one(task.dict())
     return {"id": str(result.inserted_id)}
 
     
@@ -65,5 +65,7 @@ def update_task(task_id: str, task: Task):
 
 @router.delete("/tasks/{task_id}")
 def delete_task(task_id: str):
-    db.tasks.delete_one({"_id": ObjectId(task_id)})
-    return {"message": "Task deleted"}
+    result = mongo.db.tasks.delete_one({"_id": ObjectId(task_id)})
+    if result.deleted_count == 1:
+        return {"message": "Task deleted"}
+    raise HTTPException(status_code=404, detail="Task not found")
