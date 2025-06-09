@@ -1,12 +1,13 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class ApiService {
-  static const String baseUrl = 'http://192.168.97.44:8000';
+class TaskApiService {
+  static const String baseUrl = 'http://192.168.26.44:8000';
+
 
   static Future<bool> deleteTask(String id) async {
     final url = Uri.parse(
-        '$baseUrl/tasks/$id'); // Ensure this matches your FastAPI route
+        '$baseUrl/tasks/$id'); 
 
     try {
       final response = await http.delete(url);
@@ -61,7 +62,7 @@ class ApiService {
   }
 
   static Future<List<dynamic>> fetchTasks() async {
-    final url = Uri.parse('http://192.168.97.44:8000/tasks');
+    final url = Uri.parse('$baseUrl/tasks');
 
     final response = await http.get(url);
     print('Response status: ${response.statusCode}');

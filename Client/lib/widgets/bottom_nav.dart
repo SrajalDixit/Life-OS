@@ -19,7 +19,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   final List<Widget> _screens = const [
   
     TasksView(),
-    Notes_view(),
+    NotesView(),
     AIview(),
     ProfileView()
   ];

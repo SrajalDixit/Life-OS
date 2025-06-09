@@ -20,7 +20,7 @@ class _NewTaskState extends State<NewTask> {
 
     setState(() => _isLoading = true);
 
-    final success = await ApiService.addTask(title);
+    final success = await TaskApiService.addTask(title);
     setState(() => _isLoading = false);
 
   if (success) {

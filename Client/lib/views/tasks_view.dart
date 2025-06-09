@@ -27,7 +27,7 @@ class _TasksViewState extends State<TasksView> {
 
   Future<void> loadTasks() async {
     try {
-      final data = await ApiService.fetchTasks();
+      final data = await TaskApiService.fetchTasks();
       setState(() {
         tasks = data
             .map((task) => {
@@ -67,7 +67,7 @@ class _TasksViewState extends State<TasksView> {
         final isCompleted = task['is_completed'];
 
         if (updatedTaskIds.contains(taskId)) {
-          await ApiService.updateTaskStatus(taskId, isCompleted);
+          await TaskApiService.updateTaskStatus(taskId, isCompleted);
         }
       }
 
@@ -125,7 +125,7 @@ class _TasksViewState extends State<TasksView> {
                           onChanged: (value) =>
                               toggleTaskCompletion(index, value),
                           onDelete: () =>
-                              ApiService.deleteTask(tasks[index]['id']),
+                              TaskApiService.deleteTask(tasks[index]['id']),
                         );
                       },
                     ),
@@ -133,8 +133,6 @@ class _TasksViewState extends State<TasksView> {
               ],
             ),
           ),
-
-          // Positioned Save Button
           Positioned(
             bottom: 20,
             left: 0,
@@ -156,7 +154,7 @@ class _TasksViewState extends State<TasksView> {
           );
         },
         backgroundColor: MainColor,
-        child: const Icon(Icons.menu),
+        child: const Icon(Icons.add),
       ),
     );
   }

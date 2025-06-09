@@ -4,6 +4,8 @@ from app.routes import task_routes
 import os
 from dotenv import load_dotenv  
 from app.routes import chatbot_route  
+from app.routes import note_routes
+
 
 
 
@@ -22,3 +24,4 @@ def read_root():
 
 app.include_router(task_routes.router)
 app.include_router(chatbot_route.router) 
+app.include_router(note_routes.router)
