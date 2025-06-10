@@ -1,8 +1,9 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class NotesApiService {
-  static const String baseUrl = 'http://192.168.97.44:8000';
+static String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost:8000';
 
   static Future<void> deleteNote(String noteId) async {
     final url = Uri.parse('$baseUrl/notes/$noteId');

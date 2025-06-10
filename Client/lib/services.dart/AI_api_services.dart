@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AiApiService {
- static const String baseUrl = 'http://192.168.97.44:8000';
+ 
 
   static Future<String> sendToBot(String message) async {
+    String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost:8000';
     final url = Uri.parse("$baseUrl/chatbot");
     final response = await http.post(
       url,

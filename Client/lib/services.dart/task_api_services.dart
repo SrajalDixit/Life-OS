@@ -1,21 +1,18 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class TaskApiService {
-  static const String baseUrl = 'http://192.168.97.44:8000';
-
+  static String baseUrl = dotenv.env['BASE_URL'] ?? 'http://localhost:8000';
 
   static Future<bool> deleteTask(String id) async {
-    final url = Uri.parse(
-        '$baseUrl/tasks/$id'); 
+    final url = Uri.parse('$baseUrl/tasks/$id');
 
     try {
       final response = await http.delete(url);
-      print('Delete status: ${response.statusCode}');
-      print('Delete response: ${response.body}');
+
       return response.statusCode == 200;
     } catch (e) {
-      print('Error deleting task: $e');
       return false;
     }
   }
@@ -37,7 +34,6 @@ class TaskApiService {
 
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {
-      print('Error occurred while adding task: $e');
       return false;
     }
   }
@@ -65,8 +61,6 @@ class TaskApiService {
     final url = Uri.parse('$baseUrl/tasks');
 
     final response = await http.get(url);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
