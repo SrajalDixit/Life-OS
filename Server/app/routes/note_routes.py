@@ -8,7 +8,7 @@ from bson import ObjectId
 router = APIRouter()
 
 def serialize_note(note):
-    note['_id'] = str(note['_id'])  # Convert ObjectId to string
+    note['_id'] = str(note['_id'])  
     return note
 
 
@@ -27,10 +27,10 @@ async def add_note(note: dict):
         note["confidence"] = round(score, 2)
         note["tags"] = ["General"]
 
-        note.pop('_id', None)  # Prevent inserting _id: null or _id: ''
+        note.pop('_id', None) 
         result = mongo.db.notes.insert_one(note)
 
-        # ✅ Format and return note with 'id' instead of '_id'
+        
         note["id"] = str(result.inserted_id)
         print("Note inserted:", note)
 

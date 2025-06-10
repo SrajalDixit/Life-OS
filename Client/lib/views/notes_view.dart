@@ -40,7 +40,7 @@ class _NotesViewState extends State<NotesView> {
 
     try {
       final addedNoteResponse = await NotesApiService.addNote(newNote);
-      final addedNote = addedNoteResponse['note']; // ✅ Extract inner 'note'
+      final addedNote = addedNoteResponse['note']; 
 
       setState(() {
         _notes.add(addedNote);
@@ -76,7 +76,6 @@ class _NotesViewState extends State<NotesView> {
                     try {
                       final id = note['id'];
                       if (id == null) {
-                        print('❌ Note id is missing or null');
                         return;
                       }
                       await NotesApiService.deleteNote(id);
