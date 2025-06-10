@@ -2,8 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AiApiService {
- static const String baseUrl = 'http://192.168.26.44:8000';
-
+ static const String baseUrl = 'http://192.168.97.44:8000';
 
   static Future<String> sendToBot(String message) async {
     final url = Uri.parse("$baseUrl/chatbot");

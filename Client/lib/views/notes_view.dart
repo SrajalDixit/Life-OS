@@ -32,24 +32,25 @@ class _NotesViewState extends State<NotesView> {
   }
 
   Future<void> _addNote(String text) async {
-  final newNote = {
-    'text': text,
-    'sentiment': 'neutral',
-    'tags': ['General'],
-  };
+    final newNote = {
+      'text': text,
+      'sentiment': 'neutral',
+      'tags': ['General'],
+    };
 
-  try {
-    final addedNote = await NotesApiService.addNote(newNote);
-    setState(() {
-      _notes.add(addedNote); // Update UI with saved note from backend
-    });
-    _controller.clear();
-  } catch (e) {
-    print('Failed to add note: $e');
-    // Optionally show a snackbar or dialog
+    try {
+      final addedNoteResponse = await NotesApiService.addNote(newNote);
+      final addedNote = addedNoteResponse['note']; // ✅ Extract inner 'note'
+
+      setState(() {
+        _notes.add(addedNote);
+      });
+
+      _controller.clear();
+    } catch (e) {
+      print('Failed to add note: $e');
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +72,28 @@ class _NotesViewState extends State<NotesView> {
                   text: note['text'],
                   sentiment: note['sentiment'],
                   tags: List<String>.from(note['tags']),
+                  onDelete: () async {
+                    try {
+                      final id = note['id'];
+                      if (id == null) {
+                        print('❌ Note id is missing or null');
+                        return;
+                      }
+                      await NotesApiService.deleteNote(id);
+
+                      setState(() {
+                        _notes.removeAt(index);
+                      });
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Note deleted')),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to delete: $e')),
+                      );
+                    }
+                  },
                 );
               },
             ),
@@ -99,7 +122,16 @@ class _NotesViewState extends State<NotesView> {
                   icon: const Icon(Icons.send, color: MainColor),
                   onPressed: () {
                     if (_controller.text.trim().isNotEmpty) {
+                      FocusScope.of(context).unfocus(); // Dismiss the keyboard
+
                       _addNote(_controller.text.trim());
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Note added successfully'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
                     }
                   },
                 )
