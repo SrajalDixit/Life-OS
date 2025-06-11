@@ -94,8 +94,9 @@ Once both the backend and frontend are running, you can start using Life OS:
 
 ## **Screenshots**
 
-![][image1]*![][image2]*  
-*![][image3]*
+![Tasks Screen](assets/screenshots/lifeos1)
+![Notes Screen](assets/screenshots/lifeos2)
+![AI Assistant](assets/screenshots/lifeos3)
 
 ## 
 
