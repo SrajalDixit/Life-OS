@@ -94,9 +94,9 @@ Once both the backend and frontend are running, you can start using Life OS:
 
 ## **Screenshots**
 
-<img src="Client/assets/screenshots/lifeos1.jpeg" alt="Tasks Screen" width="300"/>
-<img src="Client/assets/screenshots/lifeos2.jpeg" alt="Notes Screen" width="300"/>
-<img src="Client/assets/screenshots/lifeos3.jpeg" alt="AI Assistant" width="300"/>
+<img src="Client/assets/screenshots/lifeos1.jpeg" alt="Tasks Screen" width="250"/>
+<img src="Client/assets/screenshots/lifeos2.jpeg" alt="Notes Screen" width="250"/>
+<img src="Client/assets/screenshots/lifeos3.jpeg" alt="AI Assistant" width="250"/>
 
 
 ## 
